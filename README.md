@@ -312,24 +312,6 @@ MiniOneRec/
 5. The project evaluates local improvements over its matched R0 baseline; it
    does not claim superiority over the published full-scale MiniOneRec system.
 
-## CV-Ready Description
-
-**Efficient Generative Recommendation with Qwen2.5-3B on RTX 5090D**<br>
-Independent Research Project
-
-- Reproduced and extended a MiniOneRec-style semantic-ID generative
-  recommendation pipeline on a single RTX 5090D using Qwen2.5-3B and constrained
-  beam decoding.
-- Built reproducible SFT, evaluation, experiment-archiving, and SID-diagnostic
-  workflows; conducted controlled ablations on semantic initialization, LoRA,
-  collision-aware SID construction, and history pruning.
-- Designed a reference-free pairwise SID preference objective with prefix-aware
-  hard negatives, improving HR@20 by `2.9%` and NDCG@20 by `8.5%` over the
-  matched final-only baseline in the current sampled benchmark, with zero
-  invalid predictions.
-- Ongoing work evaluates seed stability, stronger hard-negative mining, and
-  transfer across data scales and item domains.
-
 ## Attribution and License
 
 This repository is a research extension of the open-source

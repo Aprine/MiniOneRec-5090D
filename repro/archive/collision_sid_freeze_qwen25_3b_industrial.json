@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-07-09T17:32:56.920255+00:00",
+  "experiment_name": "collision_sid_freeze_qwen25_3b_industrial",
+  "model": "Qwen/Qwen2.5-3B",
+  "dataset": "Industrial_and_Scientific_c1collision",
+  "checkpoint": "output_dir/qwen25_3b_Industrial_and_Scientific_c1collision_single5090d_sft/final_checkpoint",
+  "result_file": "results/c1_collision_single5090d/final_result_Industrial_and_Scientific.json",
+  "training": {
+    "runtime_seconds": 3323.147,
+    "steps": 190,
+    "train_loss": 5.002043507993221,
+    "final_eval_loss": 8.301302909851074,
+    "trainable_setting": "C1 collision-aware SID; freeze_LLM=True; train new SID token embeddings only"
+  },
+  "metrics": {
+    "records": 4533,
+    "beam_count": 20,
+    "topks": [
+      1,
+      3,
+      5,
+      10,
+      20
+    ],
+    "invalid_prediction_count": 0,
+    "hr": {
+      "1": 0.0,
+      "3": 0.00044120891242003087,
+      "5": 0.001544231193470108,
+      "10": 0.004632693580410324,
+      "20": 0.014780498566071035
+    },
+    "ndcg": {
+      "1": 0.0,
+      "3": 0.00022060445621001543,
+      "5": 0.0006763148662451495,
+      "10": 0.0016603003718587536,
+      "20": 0.004213619913684525
+    }
+  }
+}

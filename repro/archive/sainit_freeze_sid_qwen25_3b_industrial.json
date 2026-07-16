@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-07-09T14:06:54.197863+00:00",
+  "experiment_name": "sainit_freeze_sid_qwen25_3b_industrial",
+  "model": "Qwen/Qwen2.5-3B",
+  "dataset": "Industrial_and_Scientific",
+  "checkpoint": "output_dir/qwen25_3b_Industrial_and_Scientific_single5090d_sainit_sft/final_checkpoint",
+  "result_file": "results/sainit_single5090d/final_result_Industrial_and_Scientific.json",
+  "training": {
+    "runtime_seconds": 3283.7433,
+    "steps": 190,
+    "train_loss": 5.018499409159024,
+    "final_eval_loss": 9.654293060302734,
+    "trainable_setting": "SA-Init item_text_mean; freeze_LLM=True; train new SID input/output rows only"
+  },
+  "metrics": {
+    "records": 4533,
+    "beam_count": 20,
+    "topks": [
+      1,
+      3,
+      5,
+      10,
+      20
+    ],
+    "invalid_prediction_count": 0,
+    "hr": {
+      "1": 0.0,
+      "3": 0.00044120891242003087,
+      "5": 0.00044120891242003087,
+      "10": 0.0011030222810500773,
+      "20": 0.0013236267372600927
+    },
+    "ndcg": {
+      "1": 0.0,
+      "3": 0.0002494881432983581,
+      "5": 0.0002494881432983581,
+      "10": 0.00046407055220145364,
+      "20": 0.0005160028075216915
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-07-09T12:47:41.949103+00:00",
+  "experiment_name": "baseline_freeze_sid_qwen25_3b_industrial",
+  "model": "Qwen/Qwen2.5-3B",
+  "dataset": "Industrial_and_Scientific",
+  "checkpoint": "output_dir/qwen25_3b_Industrial_and_Scientific_single5090d_sft/final_checkpoint",
+  "result_file": "results\\single5090d\\final_result_Industrial_and_Scientific.json",
+  "training": {
+    "runtime_seconds": 3129.5365,
+    "steps": 192,
+    "train_loss": 4.915262444565694,
+    "final_eval_loss": 8.162327766418457,
+    "trainable_setting": "freeze_LLM=True; train added SID token embeddings only"
+  },
+  "metrics": {
+    "records": 4533,
+    "beam_count": 20,
+    "topks": [
+      1,
+      3,
+      5,
+      10,
+      20
+    ],
+    "invalid_prediction_count": 0,
+    "hr": {
+      "1": 0.0,
+      "3": 0.0026472534745201853,
+      "5": 0.004412089124200309,
+      "10": 0.009706596073240679,
+      "20": 0.01544231193470108
+    },
+    "ndcg": {
+      "1": 0.0,
+      "3": 0.0014969288597901486,
+      "5": 0.0022376667735138286,
+      "10": 0.003906126117491544,
+      "20": 0.005366621315022498
+    }
+  }
+}

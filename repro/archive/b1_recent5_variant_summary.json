@@ -1,0 +1,46 @@
+{
+  "category": "Industrial_and_Scientific",
+  "variant": "Industrial_and_Scientific_b1recent5",
+  "max_history": 5,
+  "splits": {
+    "train": {
+      "path": "data/Amazon/train/Industrial_and_Scientific_b1recent5_5_2016-10-2018-11.csv",
+      "rows": 36259,
+      "changed_rows": 7280,
+      "mean_before": 3.769988,
+      "mean_after": 3.160953,
+      "max_before": 10,
+      "max_after": 5,
+      "p50_before": 3,
+      "p75_before": 5,
+      "p90_before": 8,
+      "p95_before": 10
+    },
+    "valid": {
+      "path": "data/Amazon/valid/Industrial_and_Scientific_b1recent5_5_2016-10-2018-11.csv",
+      "rows": 4532,
+      "changed_rows": 1345,
+      "mean_before": 4.642542,
+      "mean_after": 3.755958,
+      "max_before": 10,
+      "max_after": 5,
+      "p50_before": 4,
+      "p75_before": 6,
+      "p90_before": 9,
+      "p95_before": 10
+    },
+    "test": {
+      "path": "data/Amazon/test/Industrial_and_Scientific_b1recent5_5_2016-10-2018-11.csv",
+      "rows": 4533,
+      "changed_rows": 1472,
+      "mean_before": 4.956541,
+      "mean_after": 3.980807,
+      "max_before": 10,
+      "max_after": 5,
+      "p50_before": 4,
+      "p75_before": 6,
+      "p90_before": 10,
+      "p95_before": 10
+    }
+  }
+}

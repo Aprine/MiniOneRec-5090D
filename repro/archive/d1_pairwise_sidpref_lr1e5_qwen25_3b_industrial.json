@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-07-11T10:29:58.223065+00:00",
+  "experiment_name": "d1_pairwise_sidpref_lr1e5_qwen25_3b_industrial",
+  "model": "output_dir/qwen25_3b_Industrial_and_Scientific_single5090d_finalonly_sft/final_checkpoint",
+  "dataset": "Industrial_and_Scientific",
+  "checkpoint": "output_dir/qwen25_3b_Industrial_and_Scientific_d1_pairwise_lr1e5_single5090d/final_checkpoint",
+  "result_file": "results/d1_pairwise_lr1e5_single5090d/final_result_Industrial_and_Scientific.json",
+  "training": {
+    "runtime_seconds": 123.45749974250793,
+    "steps": 1024,
+    "train_loss": 1.459086395218037,
+    "final_eval_loss": null,
+    "trainable_setting": "D1 reference-free pairwise SID preference; base=R0 final-only checkpoint; freeze LLM; train gradient-masked SID token rows; hard negatives by SID prefix"
+  },
+  "metrics": {
+    "records": 4533,
+    "beam_count": 20,
+    "topks": [
+      1,
+      3,
+      5,
+      10,
+      20
+    ],
+    "invalid_prediction_count": 0,
+    "hr": {
+      "1": 0.0,
+      "3": 0.0017648356496801235,
+      "5": 0.0026472534745201853,
+      "10": 0.006176924773880432,
+      "20": 0.01500110302228105
+    },
+    "ndcg": {
+      "1": 0.0,
+      "3": 0.0009401851990167473,
+      "5": 0.0013105541558785872,
+      "10": 0.0024294369646518264,
+      "20": 0.004641728198888599
+    }
+  }
+}

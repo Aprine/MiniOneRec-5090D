@@ -1,0 +1,61 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments and editor state
+.venv/
+venv/
+env/
+.conda/
+.env
+.env.*
+.vscode/
+.idea/
+*.code-workspace
+
+# Experiment trackers and logs
+wandb/
+runs/
+repro/logs/
+*.log
+
+# Model checkpoints and training state
+output_dir/
+checkpoint-*/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.gguf
+optimizer.pt
+scheduler.pt
+trainer_state.json
+
+# Downloaded or generated Amazon data; keep data processing source files
+data/Amazon/
+ts_rec_data/*.json
+*.parquet
+*.arrow
+
+# Per-example prediction outputs; compact summaries live in repro/archive
+results/
+
+# Generated embeddings and indexes
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.faiss
+*.index
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+

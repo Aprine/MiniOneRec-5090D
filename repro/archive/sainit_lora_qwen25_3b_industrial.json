@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-07-09T15:29:55.424160+00:00",
+  "experiment_name": "sainit_lora_qwen25_3b_industrial",
+  "model": "Qwen/Qwen2.5-3B",
+  "dataset": "Industrial_and_Scientific",
+  "checkpoint": "output_dir/qwen25_3b_Industrial_and_Scientific_single5090d_sainit_lora_sft/final_checkpoint",
+  "result_file": "results/sainit_lora_single5090d/final_result_Industrial_and_Scientific.json",
+  "training": {
+    "runtime_seconds": 1662.785,
+    "steps": 190,
+    "train_loss": 3.67922892421484,
+    "final_eval_loss": 4.772631645202637,
+    "trainable_setting": "SA-Init item_text_mean; freeze_LLM=True; train new SID input/output rows plus LoRA q_proj/v_proj/o_proj"
+  },
+  "metrics": {
+    "records": 4533,
+    "beam_count": 20,
+    "topks": [
+      1,
+      3,
+      5,
+      10,
+      20
+    ],
+    "invalid_prediction_count": 0,
+    "hr": {
+      "1": 0.00022060445621001543,
+      "3": 0.00044120891242003087,
+      "5": 0.0011030222810500773,
+      "10": 0.003088462386940216,
+      "20": 0.007500551511140525
+    },
+    "ndcg": {
+      "1": 0.00022060445621001543,
+      "3": 0.0003309066843150231,
+      "5": 0.0005869310438349052,
+      "10": 0.0012245279835374034,
+      "20": 0.002291114784978241
+    }
+  }
+}

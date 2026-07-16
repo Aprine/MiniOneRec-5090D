@@ -1,0 +1,265 @@
+{
+  "category": "Industrial_and_Scientific",
+  "variant": "Industrial_and_Scientific_c1collision",
+  "index": "data/Amazon/index/Industrial_and_Scientific_c1collision.index.json",
+  "collision_group_count": 15,
+  "changed_item_count": 31,
+  "new_suffix_tokens": [
+    "<d_0>",
+    "<d_1>",
+    "<d_2>"
+  ],
+  "collision_groups": [
+    {
+      "original_sid": "<a_210><b_231><c_0>",
+      "items": [
+        {
+          "item_id": "7",
+          "new_sid": "<a_210><b_231><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "8",
+          "new_sid": "<a_210><b_231><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_197><b_204><c_0>",
+      "items": [
+        {
+          "item_id": "139",
+          "new_sid": "<a_197><b_204><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "774",
+          "new_sid": "<a_197><b_204><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_107><b_93><c_0>",
+      "items": [
+        {
+          "item_id": "181",
+          "new_sid": "<a_107><b_93><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "182",
+          "new_sid": "<a_107><b_93><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_17><b_217><c_0>",
+      "items": [
+        {
+          "item_id": "216",
+          "new_sid": "<a_17><b_217><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "217",
+          "new_sid": "<a_17><b_217><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_108><b_146><c_2>",
+      "items": [
+        {
+          "item_id": "322",
+          "new_sid": "<a_108><b_146><c_2><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "2100",
+          "new_sid": "<a_108><b_146><c_2><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_15><b_118><c_0>",
+      "items": [
+        {
+          "item_id": "431",
+          "new_sid": "<a_15><b_118><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "1006",
+          "new_sid": "<a_15><b_118><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_14><b_233><c_0>",
+      "items": [
+        {
+          "item_id": "1249",
+          "new_sid": "<a_14><b_233><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "1250",
+          "new_sid": "<a_14><b_233><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_122><b_52><c_0>",
+      "items": [
+        {
+          "item_id": "1382",
+          "new_sid": "<a_122><b_52><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "1788",
+          "new_sid": "<a_122><b_52><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_108><b_146><c_0>",
+      "items": [
+        {
+          "item_id": "1787",
+          "new_sid": "<a_108><b_146><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "2831",
+          "new_sid": "<a_108><b_146><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_94><b_40><c_0>",
+      "items": [
+        {
+          "item_id": "1955",
+          "new_sid": "<a_94><b_40><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "3038",
+          "new_sid": "<a_94><b_40><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_223><b_80><c_0>",
+      "items": [
+        {
+          "item_id": "2659",
+          "new_sid": "<a_223><b_80><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "3557",
+          "new_sid": "<a_223><b_80><c_0><d_1>",
+          "suffix": "<d_1>"
+        },
+        {
+          "item_id": "3631",
+          "new_sid": "<a_223><b_80><c_0><d_2>",
+          "suffix": "<d_2>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_180><b_226><c_0>",
+      "items": [
+        {
+          "item_id": "2956",
+          "new_sid": "<a_180><b_226><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "2957",
+          "new_sid": "<a_180><b_226><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_223><b_80><c_3>",
+      "items": [
+        {
+          "item_id": "3112",
+          "new_sid": "<a_223><b_80><c_3><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "3493",
+          "new_sid": "<a_223><b_80><c_3><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_67><b_199><c_0>",
+      "items": [
+        {
+          "item_id": "3209",
+          "new_sid": "<a_67><b_199><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "3210",
+          "new_sid": "<a_67><b_199><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    },
+    {
+      "original_sid": "<a_223><b_212><c_0>",
+      "items": [
+        {
+          "item_id": "3302",
+          "new_sid": "<a_223><b_212><c_0><d_0>",
+          "suffix": "<d_0>"
+        },
+        {
+          "item_id": "3459",
+          "new_sid": "<a_223><b_212><c_0><d_1>",
+          "suffix": "<d_1>"
+        }
+      ]
+    }
+  ],
+  "csv": {
+    "train": {
+      "path": "data/Amazon/train/Industrial_and_Scientific_c1collision_5_2016-10-2018-11.csv",
+      "changed_targets": 1455,
+      "changed_history_rows": 2838
+    },
+    "valid": {
+      "path": "data/Amazon/valid/Industrial_and_Scientific_c1collision_5_2016-10-2018-11.csv",
+      "changed_targets": 238,
+      "changed_history_rows": 538
+    },
+    "test": {
+      "path": "data/Amazon/test/Industrial_and_Scientific_c1collision_5_2016-10-2018-11.csv",
+      "changed_targets": 317,
+      "changed_history_rows": 699
+    }
+  },
+  "info": {
+    "path": "data/Amazon/info/Industrial_and_Scientific_c1collision_5_2016-10-2018-11.txt",
+    "changed_items": 31
+  }
+}

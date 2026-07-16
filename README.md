@@ -1,373 +1,343 @@
 <div align="center">
 
+# MiniOneRec-5090D
 
-<img src="./assets/logo.png" width="500em" ></img> 
+### Single-GPU Research Extension for Generative Recommendation
 
-**An Open-Source Framework for
-Scaling Generative Recommendation**
+[![Research Status](https://img.shields.io/badge/status-active%20research-2ea44f)](#research-roadmap)
+[![GPU](https://img.shields.io/badge/GPU-RTX%205090D-76b900)](#experimental-setup)
+[![Backbone](https://img.shields.io/badge/backbone-Qwen2.5--3B-1677ff)](#experimental-setup)
+[![PyTorch](https://img.shields.io/badge/PyTorch-CUDA%2012.8-ee4c2c)](#reproduction)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE)
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
-![License](https://img.shields.io/badge/License-Apache--2.0-green.svg)
-<a href="https://arxiv.org/abs/2510.24431"><img src="https://img.shields.io/static/v1?label=arXiv&message=Paper&color=red"></a>
+An independent reproduction and method study built on
+[MiniOneRec](https://github.com/AkaliKong/MiniOneRec), using Qwen2.5-3B on one
+RTX 5090D.
 
-<a href="https://arxiv.org/abs/2510.24431">📄 Technical Report</a> | <a href="https://huggingface.co/kkknight/MiniOneRec">🤗 Huggingface</a> | <a href="https://modelscope.cn/models/k925238839/MiniOneRec">🤖  Modelscope</a>
+[Our Code](#our-research-contributions) | [Results](#current-results) | [Method](#research-pipeline) | [Reproduction](#reproduction) | [Roadmap](#research-roadmap)
+
 </div>
 
-> [!NOTE]
-> **RTX 5090D research extension.** This repository includes a single-GPU
-> Qwen2.5-3B reproduction, controlled ablations, SID diagnostics, and lightweight
-> pairwise preference tuning. See the
-> [research overview and current results](./README_RESEARCH_5090D.md) and the
-> [GitHub publishing guide](./GITHUB_PUBLISHING_GUIDE.md).
+## Current Research Result
 
-**MiniOneRec** is the first fully open-source **generative recommendation** framework, which provides an end-to-end workflow spanning **SID construction**, **supervised fine-tuning (SFT)**, and recommendation-oriented **reinforcement learning (RL)**. 
+| Matched comparison | HR@20 | NDCG@20 | Invalid predictions | Additional tuning time |
+|---|---:|---:|---:|---:|
+| R0: final-only SID SFT | 0.01500110 | 0.00476696 | 0 | baseline |
+| **D1: our pairwise SID preference stage** | **0.01544231** | **0.00517191** | **0** | **119.7 s** |
+| **Relative change** | **+2.9%** | **+8.5%** | unchanged | single RTX 5090D |
 
----
+> [!IMPORTANT]
+> This repository documents an ongoing sampled benchmark, not a complete
+> reproduction of every result in the MiniOneRec paper. The current improvement
+> is based on one main random seed and must be validated across seeds, larger
+> training samples, and additional datasets before it can support a general
+> performance claim.
 
-## 📢 Announcement
+## Overview
 
-- 2026-05-13 — We have introduced the new TS-Rec codebase, following the method proposed in [Fine-grained Semantics Integration for Large Language Model-based Recommendation](https://arxiv.org/pdf/2602.22632). We sincerely thank the contributors for their valuable efforts and support in making this update available.
+Large-language-model-based generative recommendation is usually evaluated with
+multi-GPU training and expensive reinforcement learning. This project asks a
+more practical research question:
 
-- 2026-01-04 — Regarding the potential discrepancies between the reproduced results based on the Instruct model and our reported metrics, please check whether the CC metric in the evaluation log is non-zero (refer to calc.py). If it is non-zero, it indicates that the model is still generating a large number of invalid items, and constrained decoding has not been successful. We suspect this issue may be related to the versions of dependencies such as the transformer library, and we are still investigating the cause to provide a universal solution. In the meantime, you may switch the Instruct model to a base model, such as Qwen2.5-base, to avoid this problem.
+> How far can semantic-ID generative recommendation be reproduced and improved
+> on one consumer GPU by changing the trainable surface, the semantic-ID design,
+> and the post-SFT objective?
 
-- 2025-12-04 — We update new scripts to support processing the Amazon23 dataset.
+The current system runs `Qwen/Qwen2.5-3B` on a single NVIDIA RTX 5090D under
+WSL. It establishes a reproducible supervised fine-tuning (SFT) and constrained
+decoding pipeline, audits semantic-ID (SID) quality, and evaluates lightweight
+alternatives to the original resource-intensive recommendation-oriented RL
+stage.
 
-- 2025-12-01 — We fix a bug in data.py that could cause the SID–item alignment task to see the answers in advance. This was because we had previously attempted to use partial trajectories to guide the full SID–item generation and does not affect the model performance.
+The strongest local direction so far is a reference-free pairwise SID
+preference stage. On the current sampled `Industrial_and_Scientific` benchmark,
+it improves HR@20 by `2.9%` and NDCG@20 by `8.5%` over the matched final-only SFT
+baseline while retaining zero invalid predictions.
 
-- 2025-11-20 — The SID construction method in **RQ-Kmeans+** has been updated (first proposed in **GPR** and this is the first open-source reproduction).
+## Our Research Contributions
 
-- 2025-11-19 — We implemented a multi-GPU parallel text-to-embedding method based on Accelerate, which is significantly more efficient than the original version: rq/text2emb/amazon_text2emb.py
+The original MiniOneRec implementation remains in this repository as the
+upstream foundation required to run the experiments. The following components
+are the local research implementation developed for this project:
 
-- 2025-11-19 — The SID construction method in **constrained-RQ-Kmeans** has been updated.
+| Contribution | Our code | Purpose |
+|---|---|---|
+| Pairwise SID preference tuning | [`repro/pairwise_preference_train.py`](./repro/pairwise_preference_train.py) | Trains gold SIDs against prefix-matched hard negatives without a reference model |
+| D1 end-to-end pipeline | [`repro/run_d1_pairwise_pipeline_5090d.sh`](./repro/run_d1_pairwise_pipeline_5090d.sh) | Runs preference tuning, constrained evaluation, and result archiving |
+| SID quality audit | [`repro/sid_diagnostics.py`](./repro/sid_diagnostics.py) | Measures collisions, prefix skew, code usage, and Gini statistics |
+| Collision-aware SID variant | [`repro/make_collision_sid_variant.py`](./repro/make_collision_sid_variant.py) | Adds disambiguation codes and rewrites train/valid/test SID sequences consistently |
+| History-pruning variant | [`repro/make_history_recent_variant.py`](./repro/make_history_recent_variant.py) | Produces controlled recent-history datasets and change statistics |
+| Reproducible experiment archive | [`repro/archive_run.py`](./repro/archive_run.py) | Recomputes metrics and stores compact JSON/Markdown experiment manifests |
+| 5090D experiment runners | [`repro/`](./repro/) | Provides environment checks and matched A0/A1/A2/B1/C1/D1 pipelines |
+| SFT research extensions | [`sft.py`](./sft.py) | Adds semantic SID initialization, LoRA, output-head SID row training, and final-only saving |
 
-- 2025-11-07 — Thank you for submitting issues! Based on your feedback, we have released a new implementation. If you encounter any problems while running the code, please update to and consult the **latest version** first.
-  
-- 2025-11-07 — You can now choose to freeze the LLM parameters during the SFT stage and train only the embeddings for the newly added SID vocabulary.
+See [`RESEARCH_CONTRIBUTIONS.md`](./RESEARCH_CONTRIBUTIONS.md) for the complete
+upstream-versus-local code map and [`repro/README.md`](./repro/README.md) for the
+research code entry points.
 
-- 2025-10-31 — You can now directly download the implementation **checkpoints** of our MiniOnRec model.
+### What Changed in `sft.py`
 
-- 2025-10-31 — The SID construction method in **RQ-Kmeans** has been updated.
+Compared with the upstream implementation, the local training path adds:
 
----
+- item-text-mean semantic initialization for newly introduced SID tokens;
+- gradient masking for both input embeddings and an untied output `lm_head`;
+- configurable LoRA on `q_proj`, `v_proj`, and `o_proj`;
+- final-only checkpoint saving for low-I/O single-GPU experiments;
+- merged standalone checkpoints for LoRA evaluation;
+- explicit initialization of `original_vocab_size` before vocabulary resizing.
 
-## 🛠️ Key Techniques 
-<div align="center">
-<img src="./assets/minionerec_framework.png" width=100% ></img> 
-</div>
+## Research Questions
 
-- **SID Construction: MiniOneRec begins by transforming every product into a compact, semantically meaningful token.** It concatenates an item’s title and description, feeds this sentence through a frozen text encoder, and then quantises the resulting embedding with a three-level RQ-VAE.
+1. Can a 3B-parameter language model support useful generative recommendation
+   adaptation on one consumer GPU without full-parameter training?
+2. Which intervention matters most under limited compute: SID initialization,
+   parameter-efficient adaptation, SID construction, history pruning, or
+   preference optimization?
+3. Can pairwise preference learning recover part of the benefit of heavier
+   GRPO-style training without maintaining a reference model or generating
+   multiple online candidates?
+4. Are observed gains stable across random seeds, data scales, item domains, and
+   negative-sampling strategies?
 
-- **SFT: With all items rewritten as SIDs, the model is first trained in a supervised fashion.** It views the chronologically ordered user history as a token sequence and learns, via next-token prediction, to generate the SID of the next product the user is likely to consume. Crucially, this stage is co-trained with a set of language-alignment objectives that map back and forth between natural language and SID space, allowing the recommender to inherit the world knowledge embedded in large language models while grounding that knowledge in discrete item codes.
+## Research Pipeline
 
-- **Recommendation-Oriented RL: After SFT, MiniOneRec is further polished with a recommendation-oriented RL phase based on GRPO.** Multiple candidate recommendations are generated for each prompt, their rewards are normalised within the group to stabilise gradients, and a KL penalty keeps the updated policy close to its reference. Because the action space is a closed list of item SIDs, the system switches to constrained beam search, which guarantees that every beam is unique and valid, greatly improving sampling efficiency and diversity. The reward signal itself blends a binary correctness term with a rank-aware component that penalises high-probability yet incorrect items more heavily, and can be augmented with collaborative-filtering scores. Together, this pipeline enables MiniOneRec to couple dense linguistic knowledge, achieving a high-performance, lightweight generative recommendation system.
+```mermaid
+flowchart LR
+    A["Amazon interactions and item text"] --> B["Semantic-ID sequences"]
+    B --> C["Qwen2.5-3B SFT"]
+    C --> D["Final-only baseline checkpoint"]
+    D --> E["Pairwise SID preference tuning"]
+    E --> F["Constrained beam decoding"]
+    F --> G["HR@K, NDCG@K, invalid count"]
+    B --> H["SID diagnostics"]
+    H --> I["Initialization, collision, and pruning ablations"]
+```
 
----
+### Baseline
 
-## 📊 Evaluation
+The fair baseline, R0, freezes the language model and trains the newly added SID
+token rows. It stores only the final checkpoint, which removes the large I/O
+overhead observed in the first smoke run.
 
-<div align="center">
-<img src="./assets/minionerec_main_result.png" width=100% ></img> 
-</div>
+### Lightweight Preference Tuning
 
----
+For each recommendation prompt, D1 pairs the gold SID with a hard negative SID,
+preferentially sampled from the same SID prefix. The model remains frozen except
+for gradient-masked SID token rows. Its objective combines a reference-free
+logistic preference loss with a chosen-SID SFT regularizer:
 
-## 🗂️ Repository Overview
+$$
+\mathcal{L} = -\log \sigma\left(\beta\left[s(y^+) - s(y^-)\right]\right)
++ \lambda\mathcal{L}_{\mathrm{SFT}},
+$$
 
-| File / Directory          | Description                                                                                                   |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `sft.sh`                  | Shell script to start the Supervised Fine-Tuning (SFT) stage                                           |
-| `sft.py`                  | Python implementation of the SFT training loop                                                            |
-| `sft_gpr.py`              | GPR-inspired SFT with Value-Aware Fine-Tuning (VAFT): implements weighted loss based on simulated item value                            |
-| `rl.sh`                   | Shell script to start the Reinforcement Learning (RL) stage                             |
-| `rl.py`                   | Python implementation of the RL training loop                                              |
-| `rl_gpr.py`               | GPR-inspired RL with Hierarchy Enhanced Policy Optimization (HEPO)                                                 |
-| `minionerec_trainer.py`   | MiniOneRec trainer — GRPO-based trainer specialized for generative recommendation                              |
-| `configs/`                | YAML configuration files                                            |
-| `evaluate.sh`     | One-click offline Top-K evaluation script                                                        |
-| `evaluate.py`     | Evaluation utilities for computing HR@K and NDCG@K.                                                           |
-| `LogitProcessor.py`                | Logit processor for constrained decoding (Python implementation)                                         |
-| `data.py`                | Data pipeline for SFT and RL training                          |
-| `convert_dataset.py`                | Converts an RQ-trained dataset to the SFT-then-RL format                                            |
-| `convert_dataset_gpr.py`           | GPR-inspired dataset converter: injects simulated heterogeneous tokens (U/E/I/O) to emulate unified input representation                                         |
-| `data/amazon18_data_process.sh`                |    Shell script to filter and preprocess Amazon18 data into an RQ-ready format                                      |
-| `data/amazon18_data_process.py`                |   Python implementation of the Amazon18 data preprocessing pipeline                                        |
-| `data/amazon18_data_process_gpr.py`            |   GPR-inspired Amazon18 preprocessing: extracts heterogeneous features for unified input representation                         |
-| `data/amazon23_data_process.sh`                |    Shell script to filter and preprocess Amazon23 data into an RQ-ready format                                      |
-| `data/amazon23_data_process.py`                |   Python implementation of the Amazon23 data preprocessing pipeline                                        |
-| `rq/text2emb/amazon_text2emb.sh`                |   Shell script to generate item embeddings (title + description) via emb_model for the Amazon dataset                                   |
-| `rq/text2emb/amazon_text2emb.py`                |   Python implementation of the above embedding generation                                         |
-| `rq/text2emb/amazon_text2emb_gpr.py`           |   GPR-inspired text-to-embedding                                 |
-| `rq/generate_indices.py`                |   Generates the SID file after training an RQ-VAE model                                       |
-| `rq/rqvae.sh`                |   Shell script to train RQ-VAE on Amazon item embeddings                        |
-| `rq/rqvae.py`                |   Python implementation of RQ-VAE training                                            |
-| `rq/rqkmeans_faiss.py`                |   Python implementation of RQ-Kmeans training based on faiss                                          |
-| `rq/rqkmeans_constrained.py`                |   Python implementation of Constrained RQ-Kmeans                         |
-| `rq/rqkmeans_constrained.sh`                |   Shell script to train constrained RQ-Kmeans constrained on Amazon item embeddings                        |
-| `rq/rqkmeans_plus.py`                |   Python implementation of RQ-Kmeans+                        |
-| `rq/rqkmeans_plus.sh`                |   Shell script to train RQ-Kmeans+ constrained on Amazon item embeddings                        |
-| `rq/generate_indices_plus.py`                |   Generates the SID file after training an RQ-Kmeans+ model                                       |
-| `rq/generate_indices_plus.sh`                |   Shell script to generate the SID file after training an RQ-Kmeans+ model                                       |
-| `requirements.txt`        | List of Python dependencies                                                                                |
+where $s(\cdot)$ is the sequence log-probability assigned by the current model,
+$y^+$ is the target SID, and $y^-$ is the hard negative SID. The default local
+configuration uses `beta=0.1` and `lambda=0.1`.
 
----
+### Valid Decoding
 
-## 🚀 Quickstart
+Evaluation uses constrained beam decoding over the closed SID vocabulary. Every
+reported run produced zero invalid predictions, so HR and NDCG are not inflated
+or obscured by malformed item identifiers.
 
-Use the pre-trained Industrial/Office SIDs we provide for a quick start!
-Reproduction can be achieved with just 4–8 A100/H100 GPUs.
+## Experimental Setup
 
-### 1. Create an isolated Python environment
+| Component | Configuration |
+|---|---|
+| Hardware | Single NVIDIA RTX 5090D |
+| Operating environment | WSL, conda environment `minionerec-5090d` |
+| Backbone | `Qwen/Qwen2.5-3B` |
+| Dataset | Amazon `Industrial_and_Scientific` |
+| Baseline SFT sample | 1,024 sampled rows per task, 3,072 mixed training records |
+| SFT validation | 1,024 records |
+| Test set | 4,533 records |
+| D1 preference sample | 1,024 training pairs, 256 validation pairs |
+| Decoding | Constrained beam search, 20 beams |
+| Primary metrics | HR@1/3/5/10/20, NDCG@1/3/5/10/20, invalid predictions |
+
+## Current Results
+
+### Main Comparison
+
+| Method | Trainable surface | Stage runtime | HR@20 | NDCG@20 | Invalid |
+|---|---|---:|---:|---:|---:|
+| R0: final-only SFT | SID token rows | 772.6 s | 0.01500110 | 0.00476696 | 0 |
+| **D1: pairwise SID preference** | SID token rows | **+119.7 s** | **0.01544231** | **0.00517191** | **0** |
+
+| Metric | R0 | D1 | Relative change |
+|---|---:|---:|---:|
+| HR@20 | 0.01500110 | 0.01544231 | **+2.9%** |
+| NDCG@20 | 0.00476696 | 0.00517191 | **+8.5%** |
+
+The `+119.7 s` value is the additional D1 stage applied to the R0 checkpoint,
+not the total end-to-end training time.
+
+### Ablation Study
+
+| ID | Variant | Runtime | HR@20 | NDCG@20 | Main observation |
+|---|---|---:|---:|---:|---|
+| A0 | Initial freeze-SID smoke run | 3129.5 s | 0.01544231 | 0.00536662 | Correct but dominated by intermediate checkpoint I/O |
+| R0 | Final-only freeze-SID baseline | 772.6 s | 0.01500110 | 0.00476696 | Fair comparison baseline |
+| A1 | Semantic initialization + frozen LLM | 3283.7 s | 0.00132363 | 0.00051600 | Semantic initialization alone was unstable |
+| A2 | Semantic initialization + LoRA | 1662.8 s | 0.00750055 | 0.00229111 | LoRA recovered part of the loss but remained below R0 |
+| C1 | Collision-aware SID suffix | 3323.1 s | 0.01478050 | 0.00421362 | Eliminating full SID collisions was insufficient |
+| B1 | Keep the five most recent history items | 735.1 s | 0.01411869 | 0.00455581 | Only 4.9% faster than R0 and less accurate |
+| D1 | Pairwise SID preference, LR `2e-5` | +119.7 s | **0.01544231** | **0.00517191** | Best current local result at K=20 |
+| D1-LR | Pairwise SID preference, LR `1e-5` | +123.5 s | 0.01500110 | 0.00464173 | Lower LR removed the improvement |
+
+### SID Diagnostics
+
+| Diagnostic | Value |
+|---|---:|
+| Items | 3,686 |
+| Unique full SID sequences | 3,670 |
+| Full SID collision groups | 15 |
+| Items affected by collisions | 31 |
+| SID token-usage Gini | 0.38698 |
+| Target interaction-frequency Gini | 0.46471 |
+| Largest observed two-token prefix | `<a_223><b_198>`, 47 items |
+
+The C1 variant removed all 15 full-SID collision groups, but it did not improve
+R0. This result suggests that collision count alone is not an adequate proxy for
+recommendation quality; SID geometry, prefix allocation, and training alignment
+remain plausible factors.
+
+## What Has Been Learned
+
+- **Checkpoint policy is an experimental variable.** Final-only saving reduced
+  the baseline runtime from approximately 3,129.5 s to 772.6 s. Runtime claims
+  must therefore compare runs with matched persistence settings.
+- **Naive semantic initialization is fragile.** Mean text-embedding
+  initialization did not improve retrieval under frozen-LLM training. LoRA
+  helped, but did not close the gap to the baseline.
+- **Collision removal is not enough.** Perfectly disambiguating the observed SID
+  collisions did not improve recommendation metrics.
+- **Uniform history truncation is a weak speed-quality trade-off.** Keeping the
+  five most recent items gave only a small speed gain after controlling for
+  checkpoint I/O.
+- **Preference tuning is promising but not yet conclusive.** D1 improved both
+  K=20 metrics, but HR@10 decreased from `0.00661813` to `0.00529451` and its
+  pairwise validation accuracy was `0.4961`. Seed stability and better negative
+  construction are the immediate priorities.
+
+## Reproduction
+
+### 1. Enter WSL and activate the environment
 
 ```bash
-conda create -n MiniOneRec python=3.11 -y
-conda activate MiniOneRec
+cd /mnt/d/Document/OneminiRec/MiniOneRec
+source ~/miniforge3/etc/profile.d/conda.sh
+conda activate minionerec-5090d
 ```
 
-### 2. Install required packages
+### 2. Verify the RTX 5090D environment
 
 ```bash
-pip install -r requirements.txt
+python repro/check_5090d_env.py --model Qwen/Qwen2.5-3B
 ```
 
-### 3. SFT
+### 3. Run the matched final-only baseline
 
 ```bash
-bash sft.sh
+bash repro/run_a0_finalonly_pipeline_5090d.sh
 ```
 
-### 4. Recommendation-Oriented RL
+### 4. Run lightweight pairwise preference tuning
 
 ```bash
-bash rl.sh
+bash repro/run_d1_pairwise_pipeline_5090d.sh
 ```
 
-### 5. Run the evaluation bash
+### 5. Run the next seed-stability experiment
 
 ```bash
-bash evaluate.sh
+RUN_ID=d1_pairwise_sidpref_seed43_qwen25_3b_industrial \
+SEED=43 \
+OUTPUT_DIR=output_dir/qwen25_3b_Industrial_and_Scientific_d1_pairwise_seed43_single5090d \
+RESULT_DIR=results/d1_pairwise_seed43_single5090d \
+bash repro/run_d1_pairwise_pipeline_5090d.sh
 ```
 
----
+See the detailed [benchmark record](./repro/BENCHMARK_5090D.md),
+[environment and pipeline guide](./repro/MINIONEREC_5090D_QWEN3B_PIPELINE.md),
+and [resume checkpoint](./repro/RESUME_5090D.md) before starting a new run.
 
-## 📜 Full Pipeline Walk-through
+## Repository Map
 
-### 0. Prerequisites
-- GPUs: <e.g., 4–8 × A100/H100 80 GB or comparable>
-- Python: 3.11
-
-### 1. Environment Setup
-- **1.1 Clone the repo**
-```
-git clone https://github.com/AkaliKong/MiniOneRec.git
-cd MiniOneRec
-```
-- **1.2 Create and activate a conda env**
-```
-conda create -n MiniOneRec python=3.11 -y
-conda activate MiniOneRec
-```
-- **1.3 Install dependencies**
-```
-pip install -r requirements.txt
-```
-
-### 2. Data Preparation
-
-- **2.1 Download the raw dataset (Optional)**  
-  Get it from the official page:
-  [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/), 
-  [Amazon Reviews 2018](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/), 
-  [Amazon Reviews 2014](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon/links.html).
-  Note: The Industrial and Office datasets are included in Amazon 2018; the Amazon 2014 and 2023 versions require slight modifications to our data/amazon18_data_process.py.
-- **2.2 Filter and preprocess**
-```
-bash data/amazon18_data_process.sh \
-     --dataset  your_dataset_type \ # e.g. Industrial
-     --user_k 5 \
-     --item_k 5 \
-     --st_year 2017 \
-     --st_month 10 \
-     --ed_year 2018 \
-     --ed_month 11 \
-     --output_path ./data/Amazon18
-```
-- **2.3 Encode item text to embeddings**
-```
-bash rq/amazon_text2emb.sh \
-     --dataset your_dataset_type \ # e.g., Industrial 
-     --root your_processed_dataset_path \
-     --plm_name qwen \
-     --plm_checkpoint your_emb_model_path
+```text
+MiniOneRec/
+|-- README.md                         # Local research results and code entry points
+|-- README_UPSTREAM.md                # Preserved upstream documentation
+|-- RESEARCH_CONTRIBUTIONS.md         # Upstream-versus-local ownership map
+|-- GITHUB_PUBLISHING_GUIDE.md        # Safe publishing instructions
+|-- repro/
+|   |-- README.md                     # Local research code index
+|   |-- BENCHMARK_5090D.md            # Experimental protocol and results
+|   |-- RESUME_5090D.md               # Current state and next command
+|   |-- pairwise_preference_train.py  # D1 preference objective
+|   |-- sid_diagnostics.py            # SID collision and distribution audit
+|   |-- run_*_5090d.sh                # Reproducible experiment entry points
+|   `-- archive/                       # Compact result manifests
+|-- sft.py                             # Modified SFT implementation
+|-- evaluate.py                        # Constrained recommendation evaluation
+`-- output_dir/                        # Local checkpoints, excluded from Git
 ```
 
-### 3. SID Construction
+## Research Roadmap
 
-Choose either 3.1.1, 3.1.2, 3.1.3 or 3.1.4.
+- [x] Reproduce Qwen2.5-3B SFT and constrained decoding on one RTX 5090D.
+- [x] Establish a fair final-only runtime baseline.
+- [x] Audit SID collisions, token usage, and prefix skew.
+- [x] Evaluate semantic initialization, LoRA, collision repair, and history
+  pruning.
+- [x] Implement a reference-free pairwise SID preference stage.
+- [ ] Repeat D1 under additional random seeds and report mean and standard
+  deviation.
+- [ ] Compare prefix-hard negatives with category-, popularity-, and
+  retrieval-based negatives.
+- [ ] Scale the strongest configuration beyond the current sampled setting.
+- [ ] Transfer the benchmark to a second Amazon category.
+- [ ] Study variable-length and frequency-aware SID allocation.
+- [ ] Compare lightweight preference tuning with a memory-feasible GRPO control.
 
-- **3.1.1 Train RQ-VAE on the embeddings**
-```
-bash rq/rqvae.sh \
-      --data_path xxx/data/Industrial_and_Scientific/Industrial_and_Scientific.emb-qwen-td.npy \
-      --ckpt_dir ./output/Industrial_and_Scientific \
-      --lr 1e-3 \
-      --epochs 10000 \
-      --batch_size 20480
-```
+## Limitations
 
-- **3.1.2 Train RQ-Kmeans on the embeddings**
+1. Current model comparisons use a sampled training configuration rather than
+   the full MiniOneRec training scale.
+2. The strongest D1 result has not yet been replicated across random seeds.
+3. Experiments currently cover one Amazon category and one 3B backbone.
+4. HR@20 and NDCG@20 improved, but HR@10 and pairwise validation behavior remain
+   mixed.
+5. The project evaluates local improvements over its matched R0 baseline; it
+   does not claim superiority over the published full-scale MiniOneRec system.
 
-```
-conda install faiss-gpu
-python rqkmeans_faiss.py --dataset Industrial_and_Scientific # The RQ-Kmeans method based on semantic embeddings has a relatively high collision rate.
-```
+## CV-Ready Description
 
-- **3.1.3 Train constrained RQ-Kmeans on the embeddings**
-For conflicting items, we add an extra layer to perform deduplication; meanwhile, we use a balanced constraint to ensure that the SIDs are evenly distributed.
-```
-pip install k_means_constrained
-pip install polars
-bash rqkmeans_constrained.sh
-```
+**Efficient Generative Recommendation with Qwen2.5-3B on RTX 5090D**<br>
+Independent Research Project
 
-- **3.1.4 Train RQ-Kmeans+ on the embeddings**
-```
-pip install k_means_constrained
-pip install polars
-bash rqkmeans_constrained.sh
-bash rqkmeans_plus.sh
-```
+- Reproduced and extended a MiniOneRec-style semantic-ID generative
+  recommendation pipeline on a single RTX 5090D using Qwen2.5-3B and constrained
+  beam decoding.
+- Built reproducible SFT, evaluation, experiment-archiving, and SID-diagnostic
+  workflows; conducted controlled ablations on semantic initialization, LoRA,
+  collision-aware SID construction, and history pruning.
+- Designed a reference-free pairwise SID preference objective with prefix-aware
+  hard negatives, improving HR@20 by `2.9%` and NDCG@20 by `8.5%` over the
+  matched final-only baseline in the current sampled benchmark, with zero
+  invalid predictions.
+- Ongoing work evaluates seed stability, stronger hard-negative mining, and
+  transfer across data scales and item domains.
 
-- **3.2 Generate indices(only RQ-VAE & RQ-Kmeans+ needed)**
-```
-python rq/generate_indices.py
-# or
-bash rq/generate_indices_plus.sh
-```
+## Attribution and License
 
-- **3.3 Convert dataset format**
-```
-python convert_dataset.py \
-     --dataset_name Industrial_and_Scientific \
-     --data_dir /path/to/Industrial_and_Scientific \
-     --output_dir /path/to/ourput_dir \
+This repository is a research extension of the open-source
+[MiniOneRec](https://github.com/AkaliKong/MiniOneRec) framework. The original
+project and this derivative codebase are distributed under the
+[Apache License 2.0](./LICENSE). Model and dataset use remain subject to their
+respective licenses and terms.
 
-```
-
-### 4. SFT
-
-```
-bash sft.sh \
-     --base_model your_model_path \
-     --output_dir your_ourput_dir \
-     --sid_index_path your_.index.json_path \
-     --item_meta_path your_.item.json_path
-```
-
-### 5. Recommendation-Oriented RL
-> (Optional) For production-scale datasets, considering the cost of reinforcement learning and diminishing marginal returns, you can perform the RL stage using only a relatively small subset on the order of tens of thousands of samples.
-```
-bash rl.sh \
-     --model_path your_model_path \
-     --output_dir output_dir \
-```
-
-### 6. Offline Evaluation
-
-```
-bash evaluate.sh \
-     --exp_name your_model_path 
-```
-
----
-
-## 🤖 Supported LLM Providers
-
-MiniOneRec supports multiple LLM providers for text enrichment tasks (e.g., user preference and item characteristic extraction). Configure the provider in your `api_info` dictionary:
-
-| Provider | `provider` value | Default Base URL | Example Models |
-|----------|-----------------|------------------|----------------|
-| OpenAI | `"openai"` | — | `text-davinci-003` |
-| DeepSeek | `"deepseek"` | `https://api.deepseek.com` | `deepseek-chat` |
-| [MiniMax](https://www.minimaxi.com) | `"minimax"` | `https://api.minimax.io/v1` | `MiniMax-M2.7`, `MiniMax-M2.5` |
-
-**Example — using MiniMax:**
-
-```python
-api_info = {
-    "provider": "minimax",
-    "api_key_list": ["your-minimax-api-key"],
-    "base_url": "https://api.minimax.io/v1",  # optional, this is the default
-}
-get_res_batch("MiniMax-M2.7", prompt_list, max_tokens=512, api_info=api_info)
-```
-
----
-
-## 📝 Upcoming Features
-
-We are actively extending MiniOneRec’s capabilities. The following enhancements are already on our roadmap:
-* ⏱️ **More SID Construction Algorithms**: forthcoming support for R-VQ, RQ-Kmeans, RQ-OPQ, and RQ-VAE-v2 (PLUM).
-* ⚙️ **MiniOneRec-Think**: a module that seamlessly integrates dialogue, reasoning, and personalized recommendation, providing an all-in-one solution for complex interactive scenarios.
-* 🔍 **Broader Dataset Support**: additional popular public datasets, including Yelp, to further validate the generality of our algorithms.
-
----
-
-## 🏫 Institutions  <!-- omit in toc -->
-
-This project is developed by the following institutions:
-
-- <img src="assets/lds.png" width="28px"> [LDS](https://data-science.ustc.edu.cn/_upload/tpl/15/04/5380/template5380/index.html)
-- <img src="assets/alphalab.jpg" width="28px"> [AlphaLab](https://alphalab-ustc.github.io/index.html)
-- <img src="assets/next.jpg" width="28px"> [NExT](https://www.nextcenter.org/)
- 
----
-
-## 🧩 Contributing
-
-We welcome and appreciate all contributions! If you have ideas to improve MiniOneRec, please feel free to submit a pull request (PR).
-
----
-## 🙏 Acknowledgements
-
-This repository reuses or adapts portions of code from the following open-source projects. We gratefully acknowledge their authors and contributors:
-
-- [ReRe](https://github.com/sober-clever/ReRe)
-- [LC-Rec](https://github.com/zhengbw0324/LC-Rec)
-
----
-
-## 🔖 Citation <!-- omit in toc -->
-
-If you find our code/paper/model helpful, please consider citing our papers 📝 and staring us ⭐️！
-
-```bib
-@misc{MiniOneRec,
-      title={MiniOneRec: An Open-Source Framework for Scaling Generative Recommendation}, 
-      author={Xiaoyu Kong and Leheng Sheng and Junfei Tan and Yuxin Chen and Jiancan Wu and An Zhang and Xiang Wang and Xiangnan He},
-      year={2025},
-      eprint={2510.24431},
-      archivePrefix={arXiv},
-      primaryClass={cs.IR},
-}
-
-@article{ReRe,
-      title={Reinforced Preference Optimization for Recommendation}, 
-      author={Junfei Tan and Yuxin Chen and An Zhang and Junguang Jiang and Bin Liu and Ziru Xu and Han Zhu and Jian Xu and Bo Zheng and Xiang Wang},
-      journal={arXiv preprint arXiv:2510.12211},
-      year={2025},
-}
-
-@inproceedings{RecZero,
-      title={Think before Recommendation: Autonomous Reasoning-enhanced Recommender}, 
-      author={Xiaoyu Kong and Junguang Jiang and Bin Liu and Ziru Xu and Han Zhu and Jian Xu and Bo Zheng and Jiancan Wu and Xiang Wang},
-      year={2025},
-      booktitle={NeurIPS},
-}
-
-```
-
----
-
-<div align="center">
-We welcome contributions from the community! 🤝
-</div>
+For academic use, cite the original MiniOneRec report as requested in the
+upstream [README](./README_UPSTREAM.md). Compact local experiment manifests are preserved
+under [`repro/archive/`](./repro/archive/) for auditability.

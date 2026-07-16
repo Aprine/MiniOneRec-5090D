@@ -140,23 +140,11 @@ git push -u origin main
 
 推送完成后刷新 GitHub 仓库页面即可。
 
-## 第九步：设置 GitHub 项目首页
+## 第九步：确认 GitHub 项目首页
 
-当前仓库保留了上游 `README.md`，本地研究首页是
-`README_RESEARCH_5090D.md`。上游 README 顶部已经加入研究首页链接，推荐先
-保持二者并存。若希望 GitHub 首页直接展示本地研究成果，可在确认上游说明已
-保留后执行：
-
-```bash
-mv README.md README_UPSTREAM.md
-mv README_RESEARCH_5090D.md README.md
-git add README.md README_UPSTREAM.md
-git commit -m "Use the RTX 5090D research overview as the repository homepage"
-git push
-```
-
-研究首页中的上游 README 链接随后应从 `./README.md` 改为
-`./README_UPSTREAM.md`。
+根目录 `README.md` 已经是本地 RTX 5090D 研究首页，包含本地代码入口、实验
+结果、消融结论和研究边界。上游项目说明保存在 `README_UPSTREAM.md`，用于
+学术署名、原始使用说明和许可证追溯，无需再执行 README 改名操作。
 
 ## 后续更新
 
@@ -164,7 +152,7 @@ git push
 `repro/archive/`，然后提交：
 
 ```bash
-git add repro README_RESEARCH_5090D.md
+git add README.md RESEARCH_CONTRIBUTIONS.md repro
 git commit -m "Record D1 seed stability experiment"
 git push
 ```
